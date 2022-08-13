@@ -78,7 +78,7 @@ var level = {
     tiles: [],
     selectedTitle: { selected: false, column: 0, row: 0 },
 
-    bgcolor: 0x000000,
+    bgcolor: '#000000',
 
 };
 
@@ -147,7 +147,7 @@ function init() {
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(level.bgcolor);
-    document.body.style.backgroundColor = level.bgcolor;
+    //document.body.style.backgroundColor = level.bgcolor;
 
     let aspect = width / height;
     let d = 10;
@@ -200,7 +200,7 @@ function helpers() {
 }
 
 function setTable() {
-    const crossTex = crossTexure()
+    const patternTex = strokeRects();
     for (let i = 0; i < level.sizeZ; i++) {
         level.tiles[i] = [];
         for (let j = 0; j < level.sizeX; j++) {
@@ -219,10 +219,10 @@ function setTable() {
                             .multiplyScalar(0.5)
                     },
                     thickness: {
-                        value: 0.03
+                        value: 0.05
                     },
                     smoothness: {
-                        value: 0.04
+                        value: 0.05
                     },
                     color: {
                         value: new THREE.Color('white')
@@ -231,7 +231,7 @@ function setTable() {
                         value: new THREE.Color('black')
                     },
                     uTex: {
-                        value: crossTex
+                        value: patternTex
                     }
                 },
                 vertexShader: `
@@ -283,7 +283,7 @@ function setTable() {
     }
 }
 
-function crossTexure() {
+function cross() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const dpr = 3;
@@ -300,6 +300,26 @@ function crossTexure() {
     const yCenter = (ctx.canvas.height / 2 / dpr) - y / 2;
     ctx.fillRect(xCenter, yCenter, x, y);
     ctx.fillRect(yCenter, xCenter, y, x);
+
+    return new THREE.Texture(canvas);
+}
+
+function strokeRects() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = 3;
+    ctx.canvas.width = 256 * dpr;
+    ctx.canvas.height = ctx.canvas.width;
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    var centerX = canvas.width / 2 / dpr;
+    var centerY = canvas.height / 2 / dpr;
+    ctx.lineWidth = 4;
+    for (var side = 20; side <= 400; side += 40) {
+        ctx.strokeRect(centerX - side / 2, centerY - side / 2, side, side);
+    }
 
     return new THREE.Texture(canvas);
 }

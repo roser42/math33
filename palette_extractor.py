@@ -6,7 +6,7 @@ def main():
     
     print('[')
     for el in args:
-        print(f'0x{el.upper()},')
+        print(f'\'#{el.upper()}\',')
     print('];')
 
 if __name__ == '__main__':

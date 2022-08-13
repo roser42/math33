@@ -83,27 +83,89 @@ var level = {
 };
 
 var palette_1 = [
-    0x274D5B,
-    0x46988E,
-    0xF8E181,
-    0xFAAC6A,
-    0xD46D4F,
-    0x925E78,
-    0xF05365
+    '#274D5B',
+    '#46988E',
+    '#F8E181',
+    '#FAAC6A',
+    '#D46D4F',
+    '#925E78',
+    '#F05365'
 ];
 
 var palette_2 = [
-    0xFFFBFE,
-    0x7A7D7D,
-    0xC2C1C1,
-    0x565254,
-    0xFFF,
-    0x878285,
-    0x515252
+    '#FFFBFE',
+    '#7A7D7D',
+    '#C2C1C1',
+    '#565254',
+    '#FFF',
+    '#878285',
+    '#515252'
 ];
 
+function cross() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = 3;
+    ctx.canvas.width = 256 * dpr;
+    ctx.canvas.height = ctx.canvas.width;
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = R.random_choice(curPalette);
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = 'black';
+    const x = 40;
+    const y = 170;
+    const xCenter = (ctx.canvas.width / 2 / dpr) - x / 2;
+    const yCenter = (ctx.canvas.height / 2 / dpr) - y / 2;
+    ctx.fillRect(xCenter, yCenter, x, y);
+    ctx.fillRect(yCenter, xCenter, y, x);
+
+    return new THREE.Texture(canvas);
+}
+
+function strokeRects() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = 3;
+    ctx.canvas.width = 256 * dpr;
+    ctx.canvas.height = ctx.canvas.width;
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = R.random_choice(curPalette);;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    var centerX = canvas.width / 2 / dpr;
+    var centerY = canvas.height / 2 / dpr;
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = 'black';
+    for (var side = 20; side <= 400; side += 40) {
+        ctx.strokeRect(centerX - side / 2, centerY - side / 2, side, side);
+    }
+
+    return new THREE.Texture(canvas);
+}
+
+function rects() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = 3;
+    ctx.canvas.width = 256 * dpr;
+    ctx.canvas.height = ctx.canvas.width;
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = R.random_choice(curPalette);;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = 'black';
+    const x = 200;
+    const y = x;
+    const xCenter = (ctx.canvas.width / 2 / dpr) - x / 2;
+    const yCenter = (ctx.canvas.height / 2 / dpr) - y / 2;
+    ctx.fillRect(xCenter, yCenter, x, y);
+
+    return new THREE.Texture(canvas);
+}
 
 const palettes = [palette_1, palette_2];
+const patterns = [cross, strokeRects, rects];
 
 init();
 setTable();
@@ -200,7 +262,6 @@ function helpers() {
 }
 
 function setTable() {
-    const patternTex = strokeRects();
     for (let i = 0; i < level.sizeZ; i++) {
         level.tiles[i] = [];
         for (let j = 0; j < level.sizeX; j++) {
@@ -208,6 +269,7 @@ function setTable() {
             //let y = R.random_int(5, 10) / 10;
             let x = 1;
             let y = x;
+            const patternTex = R.random_choice(patterns)();
             const geometry = new THREE.BoxGeometry(x, y, x);
             let material = new THREE.ShaderMaterial({
                 uniforms: {
@@ -219,7 +281,7 @@ function setTable() {
                             .multiplyScalar(0.5)
                     },
                     thickness: {
-                        value: 0.05
+                        value: 0.02
                     },
                     smoothness: {
                         value: 0.05
@@ -283,46 +345,8 @@ function setTable() {
     }
 }
 
-function cross() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const dpr = 3;
-    ctx.canvas.width = 256 * dpr;
-    ctx.canvas.height = ctx.canvas.width;
-    ctx.scale(dpr, dpr);
 
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = 'black';
-    const x = 40;
-    const y = 170;
-    const xCenter = (ctx.canvas.width / 2 / dpr) - x / 2;
-    const yCenter = (ctx.canvas.height / 2 / dpr) - y / 2;
-    ctx.fillRect(xCenter, yCenter, x, y);
-    ctx.fillRect(yCenter, xCenter, y, x);
 
-    return new THREE.Texture(canvas);
-}
-
-function strokeRects() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const dpr = 3;
-    ctx.canvas.width = 256 * dpr;
-    ctx.canvas.height = ctx.canvas.width;
-    ctx.scale(dpr, dpr);
-
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    var centerX = canvas.width / 2 / dpr;
-    var centerY = canvas.height / 2 / dpr;
-    ctx.lineWidth = 4;
-    for (var side = 20; side <= 400; side += 40) {
-        ctx.strokeRect(centerX - side / 2, centerY - side / 2, side, side);
-    }
-
-    return new THREE.Texture(canvas);
-}
 
 function animation(time) {
     renderer.render(scene, camera);

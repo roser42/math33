@@ -70,6 +70,7 @@ let R = new Random();
 let camera, scene, renderer, light, curPalette;
 const helpersOn = false;
 
+
 var level = {
     sizeX: 8,
     sizeZ: 8,
@@ -78,7 +79,7 @@ var level = {
     tiles: [],
     selectedTitle: { selected: false, column: 0, row: 0 },
 
-    bgcolor: '#000000',
+    bgcolor: '#ffffff',
 
 };
 
@@ -164,23 +165,58 @@ function rects() {
     return new THREE.Texture(canvas);
 }
 
+let canvass = crTexCanvas();
+let ctxx = canvass.getContext('2d');
+
+function crTexCanvas() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = 3;
+    ctx.canvas.width = 256 * dpr;
+    ctx.canvas.height = ctx.canvas.width;
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    return canvas;
+}
+
+function animRect(time) {
+    ctxx.clearRect(0, 0, ctxx.canvas.width, ctxx.canvas.height);
+    ctxx.fillStyle = "white";
+    ctxx.fillRect(0, 0, ctxx.canvas.width, ctxx.canvas.height);
+    ctxx.fillStyle = 'black';
+    const x = Math.abs(Math.sin(time * Math.PI / 2)) * 200;
+    console.log(x);
+    const y = x;
+    const xCenter = (ctxx.canvas.width / 2 / 3) - x / 2;
+    const yCenter = (ctxx.canvas.height / 2 / 3) - y / 2;
+    ctxx.fillRect(xCenter, yCenter, x, y);
+}
+
 const palettes = [palette_1, palette_2];
-const patterns = [cross, strokeRects, rects];
+//const patterns = [cross, strokeRects, rects];
+const patterns = [cross, strokeRects, canvass];
+
 
 init();
 setTable();
 console.log(tokenData);
 
+
+
 //let obj = level.tiles[7][6];
 //obj.position.set(obj.position.x, 2, obj.position.z)
-/* for (let i = 0; i < level.sizeX; i++) {
+
+/* let up = (level.sizeX) / 2;
+for (let i = 0; i < level.sizeX; i++) {
     for (let j = 0; j < level.tiles.length; j++) {
         let obj = level.tiles[j][i];
-        obj.position.set(obj.position.x, level.sizeX - j, obj.position.z);
+        obj.position.set(obj.position.x, level.sizeX - j - up, obj.position.z);
     }
     for (let j = 0; j < level.tiles.length; j++) {
         let obj = level.tiles[i][j];
-        obj.position.set(obj.position.x, level.sizeX - j, obj.position.z);
+        obj.position.set(obj.position.x, level.sizeX - j - up, obj.position.z);
     }
     console.log(i);
 } */
@@ -262,6 +298,7 @@ function helpers() {
 }
 
 function setTable() {
+    const patternTex = new THREE.Texture(canvass);
     for (let i = 0; i < level.sizeZ; i++) {
         level.tiles[i] = [];
         for (let j = 0; j < level.sizeX; j++) {
@@ -269,7 +306,6 @@ function setTable() {
             //let y = R.random_int(5, 10) / 10;
             let x = 1;
             let y = x;
-            const patternTex = R.random_choice(patterns)();
             const geometry = new THREE.BoxGeometry(x, y, x);
             let material = new THREE.ShaderMaterial({
                 uniforms: {
@@ -349,5 +385,14 @@ function setTable() {
 
 
 function animation(time) {
+    time *= 0.001
     renderer.render(scene, camera);
+    for (let i = 0; i < level.tiles.length; i++) {
+        for (let j = 0; j < level.tiles[i].length; j++) {
+            let cube = level.tiles[i][j];
+            cube.material.uniforms.uTex.value.needsUpdate = true;
+        }
+    }
+    animRect(time);
+    //rects(time);
 }

@@ -186,7 +186,7 @@ function animRect(time) {
     ctxx.fillStyle = "white";
     ctxx.fillRect(0, 0, ctxx.canvas.width, ctxx.canvas.height);
     ctxx.fillStyle = 'black';
-    const x = Math.abs(Math.sin(time * Math.PI / 2)) * 200;
+    const x = Math.abs(Math.sin(time * Math.PI / 3)) * 200;
     console.log(x);
     const y = x;
     const xCenter = (ctxx.canvas.width / 2 / 3) - x / 2;
@@ -195,9 +195,7 @@ function animRect(time) {
 }
 
 const palettes = [palette_1, palette_2];
-//const patterns = [cross, strokeRects, rects];
-const patterns = [cross, strokeRects, canvass];
-
+const patterns = [cross, strokeRects, rects];
 
 init();
 setTable();
@@ -386,6 +384,7 @@ function setTable() {
 
 function animation(time) {
     time *= 0.001
+
     renderer.render(scene, camera);
     for (let i = 0; i < level.tiles.length; i++) {
         for (let j = 0; j < level.tiles[i].length; j++) {
@@ -393,6 +392,7 @@ function animation(time) {
             cube.material.uniforms.uTex.value.needsUpdate = true;
         }
     }
+
     animRect(time);
     //rects(time);
 }

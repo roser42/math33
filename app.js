@@ -493,8 +493,9 @@ class World {
             this._height = window.innerHeight;
         }
         document.body.style.backgroundColor = bgColor;
-
-
+        
+        this._height = 500;
+        this._width = 500;
     }
 
     _createScene(bgColor) {

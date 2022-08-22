@@ -493,9 +493,6 @@ class World {
             this._height = window.innerHeight;
         }
         document.body.style.backgroundColor = bgColor;
-        
-        this._height = 500;
-        this._width = 500;
     }
 
     _createScene(bgColor) {
@@ -507,7 +504,7 @@ class World {
     _createCamera() {
         let aspect = this._width / this._height;
         let d = 10;
-        let camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000); 
+        let camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
         camera.position.set(20, 20, 20);
         this._center.x = (this.columns - 1) / 2;
         this._center.z = (this.rows - 1) / 2;
@@ -517,7 +514,7 @@ class World {
 
     _createRenderer() {
 
-        let renderer = new THREE.WebGLRenderer({ antialias: true});
+        let renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(this._width, this._height);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -615,7 +612,7 @@ for (let i = 0; i < world.columns; i++) {
     console.log(i);
 } */
 
-/* let up = world.columns - 1;
+let up = world.columns - 1;
 for (let i = 0; i < world.tiles.length; i++) {
     for (let j = 0; j < world.tiles[i].length; j++) {
         let obj = world.tiles[i][j].obj;
@@ -623,7 +620,7 @@ for (let i = 0; i < world.tiles.length; i++) {
         obj.position.y = -1 * (obj.position.x / a + obj.position.z / a - up);
 
     }
-} */
+}
 
 function helpers() {
     const size = ((world.columns > world.rows ? world.columns : world.rows) - 1) * 2;
@@ -644,6 +641,11 @@ function helpers() {
     world.Add(dotCenter);
 }
 
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+
+}
 
 function animation(time) {
     time *= 0.001
@@ -673,3 +675,4 @@ function animation(time) {
     //animRect(time);
     //rects(time);
 }
+
